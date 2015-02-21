@@ -70,7 +70,7 @@
         X<-format(X,scientific=FALSE)
 
 
-#### Name the activities in the data set
+####2.Name the activities in the data set
 
 * Read activity labels file into a data frame and name the columns appropriately
 * Ensure Y's column has been also named the same variable
@@ -86,7 +86,7 @@
         Y<-data.frame(Y)
         names(Y)<-c("Activity")
 
-#### Label the data set with descriptive variable names
+####3.Label the data set with descriptive variable names
 
 * Load the variable name into features data frame
 * Use regular expressions to remove special characters from the names. This would however render the data frame into a vector. But as we are using this only to name the columns of the X data , this is not an issue.
@@ -102,7 +102,7 @@
         
         names(X)<-factor(features)
 
-#### Extract only Mean and Standard Deviation
+####4.Extract only Mean and Standard Deviation
 
 * Use Select to filter out the unwanted variables retaining only mean and std dev
 * Use Gather to get the data into long format
@@ -112,7 +112,7 @@
         tidydata <- gather(tidydata, Feature,Value, (tBodyAcc_mean_X):(fBodyBodyGyroJerkMag_std))
         tidydata$Value<-as.numeric(tidydata$Value)
 
-#### Create a second set with average of each variable for each activity and subject
+####5.Create a second set with average of each variable for each activity and subject
 
 * Use ddply to average the data grouped by Subject,Activity and Feature columns
 * Use seperate to split the variable names on "_" . Here, we have to ensure there are only single "_" in the names
