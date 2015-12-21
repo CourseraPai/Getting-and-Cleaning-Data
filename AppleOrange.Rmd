@@ -1,0 +1,70 @@
+---
+title: "AppleOrange"
+output: html_document
+---
+
+```{r}
+library(downloader)
+library(dplyr)
+download("https://raw.githubusercontent.com/thoughtfulbloke/faoexample/master/appleorange.csv", destfile="appleorange.csv")
+download("https://raw.githubusercontent.com/thoughtfulbloke/faoexample/master/stability.csv", destfile="stability.csv")
+
+ao<-read.csv("appleorange.csv")
+str(ao)
+st<-read.csv("stability.csv")
+str(st)
+
+
+unique(ao[,6])
+ao<-ao[,1:5]
+ao[complete.cases(ao),]
+
+ao<-filter(ao,ao[,1] != "Food supply quantity (tonnes) (tonnes)")
+ao<-ao[complete.cases(ao),]
+
+st<-filter(st,st[,1] != "Value (index)")
+st<-filter(st,st[,1] != "Value (kcal/capita/day)")
+st<-filter(st,st[,1] != "Value (per 100 square km of land area)")
+st<-st[,1:5]
+st<-st[complete.cases(st),]
+
+
+ao[,5] <- gsub("\xca", "", ao[,5])
+ao[,5] <- gsub(", tonnes \\(\\)", "", ao[,5])
+ao[,5] <- as.numeric(ao[,5])
+
+st[,5] <- gsub(", index \\(\\)", "", st[,5])
+st[,5] <- gsub(", per 100 square km of land area \\(\\)", "", st[,5])
+st[,5] <- gsub(", kcal/capita/day \\(\\)", "", st[,5])
+st[,5] <- as.numeric(st[,5])
+
+st<-st[,c(1,3,5)]
+
+ao<-ao[,c(1,3,5)]
+
+###do the top ten most stable countries grow more apples or oranges (in total volume)
+
+s<-st[st[,2] == "Political stability and absence of violence/terrorism (index)" ,]
+arrange(s,desc(s[,3]))
+names(s) <- c("country","idxname","index")
+
+
+
+t<-s[row_number(-s[,3])<=10,]
+top10stable<-arrange(t,desc(t[,3]))
+names(top10stable) <- c("country","idxname","index")
+names(ao)<- c("country","product","measure")
+
+library(sqldf)
+
+
+
+```
+
+You can also embed plots, for example:
+
+```{r, echo=FALSE}
+plot(cars)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
